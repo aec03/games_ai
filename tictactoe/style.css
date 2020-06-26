@@ -207,6 +207,7 @@ body {
   border-radius: 15px;
   padding: 0.25em 1em;
   cursor: pointer;
+  margin: 10px 20px;
 }
 
 .starting-message button:hover {
@@ -231,4 +232,5 @@ body {
 
 .startButtons {
   display: flex;
+  flex-direction: column;
 }
