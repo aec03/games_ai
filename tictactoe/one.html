@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Fredoka+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://use.typekit.net/avp4uwz.css" />
+    <script src="script.js" defer></script>
+    <script src="single.js" defer></script>
+    <script src="double.js" defer></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="score show" id="score">
+      <div id="human">Human Wins:</div>
+      <div id="computer">Computer Wins:</div>
+    </div>
+    <div class="board" id="board">
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+    </div>
+    <div class="starting-message show" id="startingMessage">
+      <div data-starting-message-text>Unbeatable Tic-Tac-Toe</div>
+      <h1>Aidan Curtis | 2020</h1>
+      <div class="startButtons">
+        <button id="startButton">Start Game</button>
+      </div>
+    </div>
+    <div class="winning-message" id="winningMessage">
+      <div data-winning-message-text>X Wins!</div>
+      <button id="restartButton">Restart</button>
+    </div>
+  </body>
+</html>
