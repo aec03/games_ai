@@ -219,7 +219,7 @@ function single() {
   }
 }
 
-function double() {
+function two_player() {
   const X_CLASS = "x";
   const CIRCLE_CLASS = "o";
   const WINNING_COMBINATIONS = [
@@ -241,7 +241,6 @@ function double() {
   );
   const restartButton = document.getElementById("restartButton");
   const scoreText = document.getElementsById("score");
-
   let circleTurn;
 
   startGame();
@@ -249,7 +248,6 @@ function double() {
   restartButton.addEventListener("click", startGame);
 
   function startGame() {
-    scoreText.classList.remove("show");
     cellElements.forEach((cell) => {
       cell.classList.remove(X_CLASS);
       cell.classList.remove(CIRCLE_CLASS);

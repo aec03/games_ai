@@ -30,7 +30,6 @@ function double() {
   restartButton.addEventListener("click", startGame);
 
   function startGame() {
-    scoreText.classList.remove("show");
     unavailable = [];
     cellElements.forEach((cell) => {
       cell.classList.remove(X_CLASS);

@@ -1,0 +1,63 @@
+:root {
+  --cell-size: 70px;
+  --mark-size: calc(var(--cell-size) * 0.9);
+  --dark-color: #2e2e2e;
+  --blue: #1976d2;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  font-family: dm sans, fredoka one;
+  font-weight: 800;
+  background-color: var(--blue);
+}
+
+body {
+  margin: 0;
+}
+
+.board {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: repeat(7, auto);
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  margin: 2px 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  background: transparent;
+}
+
+.cell::before {
+  content: "";
+  position: absolute;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: 50px;
+  background: #1976d2;
+  box-shadow: inset 12px 12px 20px #1564b3, inset -12px -12px 20px #1d88f2;
+}
+
+.cell::after {
+  content: "";
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  background-color: var(--color);
+  border-radius: 50%;
+  background: #2e2e2e;
+  box-shadow: inset 5px 5px 10px #1c1c1c, inset -5px -5px 10px #404040;
+}
