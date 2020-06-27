@@ -8,13 +8,12 @@ class ConnectFour:
         self.human = 'X'
         self.comp = 'O'
         self.scores = {
-            'x win': -100,
-            'x three': -50,
-            'x two': -10,
-            'tie': 0,
-            'o two': 10,
-            'o three': 20,
-            'o win': 500,
+            'center': 20,
+            'x-two': -5,
+            'x-three': -100,
+            'o-two': 5,
+            'o-three': 15,
+            'o-win': 500,
         }
         self.open_spots = {
             0: 6,
@@ -27,18 +26,12 @@ class ConnectFour:
         }
         self.LEFT_DIAGONAL_COMBOS = [(k, k + 6, k + 12, k + 18) for j in range(3, 7) for k in range(j, 28, 7)]
         self.RIGHT_DIAGONAL_COMBOS = [(k, k + 8, k + 16, k + 24) for j in range(4) for k in range(j, 28, 7)]
+        self.HORIZONTAL_COMBOS = [(k, k + 1, k + 2, k + 3) for j in range(7) for k in range(j * 7, j * 7 + 4)]
+        self.VERTICAL_COMBOS = [(k, k + 7, k + 14, k + 21) for k in range(28)]
         if first_move == 'human':
             self.move = self.human
         else:
             self.move = self.comp
-
-    def VERTICAL_COMBOS(self, move):
-        move = move % 7
-        return [(k, k + 7, k + 14, k + 21) for k in range(move, 28, 7)]
-
-    def HORIZONTAL_COMBOS(self, move):
-        move = int(move / 7)
-        return [(k, k + 1, k + 2, k + 3) for k in range(7 * move, 7 * move + 4)]
 
     def print_board(self):
         for i in range(0, 49, 7):
@@ -87,14 +80,140 @@ class ConnectFour:
                 print('Sorry, move is not valid!\n')
 
     def comp_move(self):
-        return self.comp, int
+        print('Computer is predicting the future to outsmart you...\n')
+        best_score = float('-inf')
+        for move in self.possible_moves():
+            self.insert_move(self.comp, move)
+            score = self.minimax(0, False)
+            self.remove_move(move)
+            if score > best_score:
+                best_score = score
+                best_move = move
+            
+        return self.comp, best_move
+
+    def minimax(self, depth, is_maximizing):
+        if depth == 4:
+            self.evaluate_board()
+        if is_maximizing:
+            best_score = float('-inf')
+            for move in self.possible_moves():
+                self.insert_move(self.comp, move)
+                score = self.minimax(depth + 1, False)
+                self.remove_move(move)
+                if score > best_score:
+                    best_score = score
+            return best_score
+        else:
+            best_score = float('inf')
+            for move in self.possible_moves():
+                self.insert_move(self.comp, move)
+                score = self.minimax(depth + 1, False)
+                self.remove_move(move)
+                if score < best_score:
+                    best_score = score
+            return best_score
+
+    def evaluate_board(self):
+        best_score = float('-inf')
+        for move in self.possible_moves():
+            self.insert_move(self.comp, move)
+            score = self.calculate_score(move)
+            self.remove_move(move)
+            if score > best_score:
+                best_score = score
+
+        return best_score
+
+    def calculate_score(self, move):
+        """ takes move as input; gets total score of possible move """
+        score = self.calculate_diagonals(move) + self.calculate_horizonals(move) + self.calculate_verticals(move)
+        if move % 7 == 3: score += self.scores['center']
+        return score
+
+    def calculate_diagonals(self, move):
+        score = 0
+        for combo in self.LEFT_DIAGONAL_COMBOS:
+            t = self.make_board_tuple(combo)
+            if move in combo:
+                if t.count('O') == 2 and t.count(' ') == 2:
+                    score += self.scores['o-two']
+                elif t.count('O') == 3 and t.count(' ') == 1:
+                    score += self.scores['o-three']
+                elif t.count('O') == 4:
+                    score += self.scores['o-win']
+            else:
+                if t.count('X') == 2 and t.count(' ') == 2:
+                    score += self.scores['x-two']
+                elif t.count('X') == 3 and t.count(' ') == 1:
+                    score += self.scores['x-three']
+
+        for combo in self.RIGHT_DIAGONAL_COMBOS:
+            t = self.make_board_tuple(combo)
+            if move in combo:
+                if t.count('O') == 2 and t.count(' ') == 2:
+                    score += self.scores['o-two']
+                elif t.count('O') == 3 and t.count(' ') == 1:
+                    score += self.scores['o-three']
+                elif t.count('O') == 4:
+                    score += self.scores['o-win']
+            else:
+                if t.count('X') == 2 and t.count(' ') == 2:
+                    score += self.scores['x-two']
+                elif t.count('X') == 3 and t.count(' ') == 1:
+                    score += self.scores['x-three']
+
+        return score
+
+    def calculate_horizonals(self, move):
+        score = 0
+        for combo in self.HORIZONTAL_COMBOS:
+            t = self.make_board_tuple(combo)
+            if move in combo:
+                if t.count('O') == 2 and t.count(' ') == 2:
+                    score += self.scores['o-two']
+                elif t.count('O') == 3 and t.count(' ') == 1:
+                    score += self.scores['o-three']
+                elif t.count('O') == 4:
+                    score += self.scores['o-win']
+            else:
+                if t.count('X') == 2 and t.count(' ') == 2:
+                    score += self.scores['x-two']
+                elif t.count('X') == 3 and t.count(' ') == 1:
+                    score += self.scores['x-three']
+
+        return score
+
+    def calculate_verticals(self, move):
+        for combo in self.VERTICAL_COMBOS:
+            t = self.make_board_tuple(combo)
+            if move in combo:
+                if t.count('O') == 2 and t.count(' ') == 2:
+                    score += self.scores['o-two']
+                elif t.count('O') == 3 and t.count(' ') == 1:
+                    score += self.scores['o-three']
+                elif t.count('O') == 4:
+                    score += self.scores['o-win']
+            else:
+                if t.count('X') == 2 and t.count(' ') == 2:
+                    score += self.scores['x-two']
+                elif t.count('X') == 3 and t.count(' ') == 1:
+                    score += self.scores['x-three']
+
+        return score
+
+    def make_board_tuple(self, combo):
+        a, b, c, d = combo
+        return (self.board[a], self.board[b], self.board[c], self.board[d])
 
     def make_move(self):
         if self.move == self.human:
             self.print_board()
             player, move = self.human_move()
+        else:
+            player, move = self.comp_move()
 
-        
+        self.insert_move(player, move)
 
 def Game():
     print('Welcome to Connect Four!')
