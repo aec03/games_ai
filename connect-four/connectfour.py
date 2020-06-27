@@ -2,19 +2,11 @@ import random
 
 class ConnectFour:
     """ represents a connect-four board"""
-    def __init__(self, first_move='human'):
+    def __init__(self, first_move='human', depth=5):
         self.board = [' ' for i in range(49)]
-        self.board_hist = {}
+        self.depth = depth
         self.human = 'X'
         self.comp = 'O'
-        self.scores = {
-            'center': 20,
-            'x-two': -5,
-            'x-three': -100,
-            'o-two': 5,
-            'o-three': 10,
-            'o-win': 500,
-        }
         self.open_spots = {
             0: 6,
             1: 6,
@@ -49,6 +41,10 @@ class ConnectFour:
 
     def possible_moves(self):
         return [self.move_to_spot(i) for i in range(7) if self.open_spots[i] != None]
+    
+    def make_board_tuple(self, combo):
+        a, b, c, d = combo
+        return (self.board[a], self.board[b], self.board[c], self.board[d])
 
     def is_available(self, move):
         """ takes move in DIMINISHED form. returns True if move is available, False otherwise """
@@ -87,38 +83,64 @@ class ConnectFour:
 
     def comp_move(self):
         print('Computer is considering its choices...\n')
-        best_move = self.evaluate_board()
+        best_move, _ = self.minimax(self.depth, float('-inf'), float('inf'), True)
         return self.comp, best_move
 
-    # def minimax(self, depth, is_maximizing):
-    #     if depth == 5:
-    #         return self.evaluate_board()
-    #     if self.is_full():
-    #         return 0
-    #     if is_maximizing:
-    #         best_score = float('-inf')
-    #         for move in self.possible_moves():
-    #             self.insert_move(self.comp, move)
-    #             score = self.minimax(depth + 1, False)
-    #             self.remove_move(move)
-    #             if score > best_score:
-    #                 best_score = score
-    #         return best_score
-    #     else:
-    #         best_score = float('inf')
-    #         for move in self.possible_moves():
-    #             self.insert_move(self.human, move)
-    #             score = self.minimax(depth + 1, False)
-    #             self.remove_move(move)
-    #             if score < best_score:
-    #                 best_score = score
-    #         return best_score
+    def is_last_peice(self):
+        return self.check_win(self.human) or self.check_win(self.comp) or self.is_full()
 
-    def evaluate_board(self):
+    def minimax(self, depth, alpha, beta, is_maximizing):
+        possible_moves = self.possible_moves()
+        is_last = self.is_last_peice()
+        if depth == 0 or is_last:
+            if is_last:
+                if self.check_win(self.comp):
+                    return (None, 10000)
+                elif self.check_win(self.human):
+                    return (None, -10000)
+                else:
+                    return (None, 0)
+            else:
+                return (None, self.calculate_score(self.comp))
+        if self.is_full():
+            return 0
+        if is_maximizing:
+            best_score = float('-inf')
+            best_move = random.choice(possible_moves)
+            for move in possible_moves:
+                self.insert_move(self.comp, move)
+                score = self.minimax(depth - 1, alpha, beta, False)[1]
+                self.remove_move(move)
+                if score > best_score:
+                    best_score = score
+                    best_move = move
+                alpha = max(alpha, best_score)
+                if alpha >= beta:
+                    break
+            return best_move, best_score
+        else:
+            best_score = float('inf')
+            best_move = random.choice(possible_moves)
+            for move in possible_moves:
+                self.insert_move(self.human, move)
+                score = self.minimax(depth - 1, alpha, beta, True)[1]
+                self.remove_move(move)
+                if score < best_score:
+                    best_score = score
+                    best_move = move
+                beta = min(beta, best_score)
+                if alpha >= beta:
+                     break
+            return best_move, best_score
+
+    def pick_best_move(self, peice):
+        possible_moves = self.possible_moves()
         best_score = float('-inf')
-        for move in self.possible_moves():
-            self.insert_move(self.comp, move)
-            score = self.calculate_score(move, self.comp)
+        best_move = random.choice(possible_moves)
+        for move in possible_moves:
+            print(best_move)
+            self.insert_move(peice, move)
+            score = self.calculate_score(peice)
             self.remove_move(move)
             if score > best_score:
                 best_score = score
@@ -133,19 +155,25 @@ class ConnectFour:
             opp_peice = self.comp
 
         if window.count(peice) == 2 and window.count(' ') == 2:
-            score += 100
+            score += 5
         elif window.count(peice) == 3 and window.count(' ') == 1:
             score += 10
         elif window.count(peice) == 4:
-            score += 5
+            score += 1000
 
+        if window.count(opp_peice) == 3 and window.count(' ') == 1:
+            score -= 50
         if window.count(opp_peice) == 2 and window.count(' ') == 2:
-            score += -8
+            score -= 5
+
         return score
 
-    def calculate_score(self, move, peice):
+    def calculate_score(self, peice):
         """ takes move as input; gets total score of possible move """
         score = 0
+        center_count = [self.board[c] for c in range(3, 49, 7)].count(peice)
+        score += center_count * 5
+
         for combo in self.LEFT_DIAGONAL_COMBOS:
             score += self.evaluate_window(self.make_board_tuple(combo), peice)
 
@@ -159,11 +187,6 @@ class ConnectFour:
             score += self.evaluate_window(self.make_board_tuple(combo), peice)
 
         return score
-
-
-    def make_board_tuple(self, combo):
-        a, b, c, d = combo
-        return (self.board[a], self.board[b], self.board[c], self.board[d])
 
     def make_move(self):
         if self.move == self.human:
@@ -173,21 +196,21 @@ class ConnectFour:
             player, move = self.comp_move()
 
         self.insert_move(player, move)
-        self.swap_moves()
 
-    def check_win(self):
+    def check_win(self, peice):
         for combo in self.LEFT_DIAGONAL_COMBOS:
             a, b, c, d = self.make_board_tuple(combo)
-            if a == b == c == d and a != ' ': return a
+            if a == b == c == d and a == peice: return True
         for combo in self.RIGHT_DIAGONAL_COMBOS:
             a, b, c, d = self.make_board_tuple(combo)
-            if a == b == c == d and a != ' ': return a
+            if a == b == c == d and a == peice: return True
         for combo in self.HORIZONTAL_COMBOS:
             a, b, c, d = self.make_board_tuple(combo)
-            if a == b == c == d and a != ' ': return a
+            if a == b == c == d and a == peice: return True
         for combo in self.VERTICAL_COMBOS:
             a, b, c, d = self.make_board_tuple(combo)
-            if a == b == c == d and a != ' ': return a
+            if a == b == c == d and a == peice: return True
+        return False
 
     def is_full(self):
         for v in self.open_spots.values():
@@ -196,6 +219,7 @@ class ConnectFour:
 
     def print_possible_scores(self):
         return [self.calculate_score(move) for move in self.possible_moves()]
+
 
 def Game():
     print('Welcome to Connect Four!')
@@ -210,22 +234,24 @@ def Game():
         else:
             print('Sorry, your preference was unclear!')
     print()
-    c = ConnectFour(choice)
+    c = ConnectFour(choice, 7)
 
     while True:
         c.make_move()
 
-        winner = c.check_win()
-        if winner != None:
+        winner = c.check_win(c.move)
+        if winner:
             print()
             c.print_board()
-            print(winner + ' wins!')
+            print(c.move + ' wins!')
             break
 
         if c.is_full():
             print()
             print('Draw :(')
             break
+
+        c.swap_moves()
 
 
 Game()
