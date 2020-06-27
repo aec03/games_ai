@@ -33,6 +33,12 @@ class ConnectFour:
         else:
             self.move = self.comp
 
+    def swap_moves(self):
+        if self.move == self.human:
+            self.move = self.comp
+        else:
+            self.move = self.human
+
     def print_board(self):
         for i in range(0, 49, 7):
             print(self.board[i:i+7])
@@ -80,7 +86,7 @@ class ConnectFour:
                 print('Sorry, move is not valid!\n')
 
     def comp_move(self):
-        print('Computer is predicting the future to outsmart you...\n')
+        print('Computer is considering its choices...\n')
         best_score = float('-inf')
         for move in self.possible_moves():
             self.insert_move(self.comp, move)
@@ -93,8 +99,10 @@ class ConnectFour:
         return self.comp, best_move
 
     def minimax(self, depth, is_maximizing):
-        if depth == 4:
-            self.evaluate_board()
+        if depth == 5:
+            return self.evaluate_board()
+        if self.is_full():
+            return 0
         if is_maximizing:
             best_score = float('-inf')
             for move in self.possible_moves():
@@ -107,7 +115,7 @@ class ConnectFour:
         else:
             best_score = float('inf')
             for move in self.possible_moves():
-                self.insert_move(self.comp, move)
+                self.insert_move(self.human, move)
                 score = self.minimax(depth + 1, False)
                 self.remove_move(move)
                 if score < best_score:
@@ -185,6 +193,7 @@ class ConnectFour:
         return score
 
     def calculate_verticals(self, move):
+        score = 0
         for combo in self.VERTICAL_COMBOS:
             t = self.make_board_tuple(combo)
             if move in combo:
@@ -211,9 +220,34 @@ class ConnectFour:
             self.print_board()
             player, move = self.human_move()
         else:
+            print(self.possible_moves())
+            print(self.print_possible_scores())
             player, move = self.comp_move()
 
         self.insert_move(player, move)
+        self.swap_moves()
+
+    def check_win(self):
+        for combo in self.LEFT_DIAGONAL_COMBOS:
+            a, b, c, d = self.make_board_tuple(combo)
+            if a == b == c == d and a != ' ': return a
+        for combo in self.RIGHT_DIAGONAL_COMBOS:
+            a, b, c, d = self.make_board_tuple(combo)
+            if a == b == c == d and a != ' ': return a
+        for combo in self.HORIZONTAL_COMBOS:
+            a, b, c, d = self.make_board_tuple(combo)
+            if a == b == c == d and a != ' ': return a
+        for combo in self.VERTICAL_COMBOS:
+            a, b, c, d = self.make_board_tuple(combo)
+            if a == b == c == d and a != ' ': return a
+
+    def is_full(self):
+        for v in self.open_spots.values():
+            if v != None: return False
+        return True
+
+    def print_possible_scores(self):
+        return [self.calculate_score(move) for move in self.possible_moves()]
 
 def Game():
     print('Welcome to Connect Four!')
@@ -232,6 +266,18 @@ def Game():
 
     while True:
         c.make_move()
+
+        winner = c.check_win()
+        if winner != None:
+            print()
+            c.print_board()
+            print(winner + ' wins!')
+            break
+
+        if c.is_full():
+            print()
+            print('Draw :(')
+            break
 
 
 Game()
