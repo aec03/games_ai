@@ -2,66 +2,72 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.0" />
     <title>Connect Four</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Fredoka+One&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://use.typekit.net/avp4uwz.css" />
     <link rel="stylesheet" href="style.css" />
+    <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Fredoka+One&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://use.typekit.net/avp4uwz.css" />
+    <script src="single.js" defer></script>
   </head>
   <body>
-    <div class="board" id="board">
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
-      <div class="cell" data-cell></div>
+    <div id="turn-bar"></div>
+    <div id="game">
+      <div class="board" id="board">
+        <div class="cell" data-col="0" data-cell="0" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="1" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="2" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="3" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="4" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="5" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="6" data-peice=" "></div>
+        <div class="cell" data-col="0" data-cell="7" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="8" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="9" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="10" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="11" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="12" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="13" data-peice=" "></div>
+        <div class="cell" data-col="0" data-cell="14" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="15" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="16" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="17" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="18" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="19" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="20" data-peice=" "></div>
+        <div class="cell" data-col="0" data-cell="21" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="22" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="23" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="24" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="25" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="26" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="27" data-peice=" "></div>
+        <div class="cell" data-col="0" data-cell="28" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="29" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="30" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="31" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="32" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="33" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="34" data-peice=" "></div>
+        <div class="cell" data-col="0" data-cell="35" data-peice=" "></div>
+        <div class="cell" data-col="1" data-cell="36" data-peice=" "></div>
+        <div class="cell" data-col="2" data-cell="37" data-peice=" "></div>
+        <div class="cell" data-col="3" data-cell="38" data-peice=" "></div>
+        <div class="cell" data-col="4" data-cell="39" data-peice=" "></div>
+        <div class="cell" data-col="5" data-cell="40" data-peice=" "></div>
+        <div class="cell" data-col="6" data-cell="41" data-peice=" "></div>
+      </div>
+    </div>
+    <div class="starting-message show" id="starting-message">
+      <div data-starting-message-text>Connect Four</div>
+      <h1>Designed by Aidan Curtis</h1>
+      <button id="startButton">Start Game</button>
+    </div>
+    <div class="winning-message" id="winningMessage">
+      <div data-winning-message-text></div>
+      <button id="restartButton"">Restart</button>
     </div>
   </body>
 </html>
