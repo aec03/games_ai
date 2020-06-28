@@ -14,11 +14,11 @@
   box-sizing: border-box;
   font-family: dm sans, fredoka one;
   font-weight: 600;
-  background: var(--blue);
 }
 
 body {
   margin: 0;
+  background: var(--blue);
 }
 
 #game {
@@ -32,7 +32,6 @@ body {
 }
 
 .board {
-  z-index: 0;
   display: grid;
   justify-content: center;
   align-content: center;
@@ -42,7 +41,6 @@ body {
   padding: 1em;
   border-radius: 40px;
   background: linear-gradient(145deg, #1b7ee1, #176abd);
-  box-shadow: 12px 12px 36px #11508f, -12px -12px 36px #219cff;
 }
 
 .cell {
@@ -100,7 +98,9 @@ body {
   box-shadow: 6px 6px 12px #b3174c, -6px -6px 12px #ff257a;
 }
 
-.cell.empty {
+.cell.empty,
+.cell.yellow,
+.cell.red {
   cursor: not-allowed;
 }
 
@@ -135,8 +135,7 @@ body {
   color: var(--blue);
   border-radius: 15px;
   background: #ecf0f1;
-  box-shadow: inset 17px 17px 39px #c4c7c8, 
-              inset -17px -17px 39px #ffffff;
+  box-shadow: inset 17px 17px 39px #c4c7c8, inset -17px -17px 39px #ffffff;
 }
 
 .winning-message button:focus {
@@ -192,8 +191,7 @@ body {
   color: var(--blue);
   border-radius: 15px;
   background: #ecf0f1;
-  box-shadow: inset 17px 17px 39px #c4c7c8, 
-              inset -17px -17px 39px #ffffff;
+  box-shadow: inset 17px 17px 39px #c4c7c8, inset -17px -17px 39px #ffffff;
 }
 
 .starting-message button:focus {
@@ -216,4 +214,73 @@ body {
   margin: 0;
   color: var(--light-color);
   background: transparent;
+}
+
+.board-background {
+  z-index: -2;
+  position: absolute;
+  height: 474px;
+  width: 544px;
+  background: transparent;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
+  padding: 1em;
+  border-radius: 40px;
+  box-shadow: 12px 12px 36px #11508f, -12px -12px 36px #219cff;
+}
+
+.pointer {
+  z-index: -1;
+  display: flex;
+  position: absolute;
+  top: 130px;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 7;
+}
+
+.pointer-cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  margin: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  border-radius: 50px;
+}
+
+.pointer-cell.red {
+  background: var(--red);
+  box-shadow: inset 6px 6px 12px #b3174c, inset -6px -6px 12px #ff257a;
+}
+
+.pointer-cell.red::after {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #d21b59, #f9206a);
+  box-shadow: 6px 6px 12px #b3174c, -6px -6px 12px #ff257a;
+}
+
+.pointer-cell.yellow {
+  background: var(--yellow);
+  box-shadow: inset 5px 5px 10px #867c1e, inset -5px -5px 10px #ffff44;
+}
+
+.pointer-cell.yellow::after {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #e6d435, #fffb3f);
+  box-shadow: 5px 5px 12px #c4b52d, -5px -5px 12px #ffff49;
 }

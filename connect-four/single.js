@@ -1,18 +1,52 @@
 // selectors
-const cellElements = document.querySelectorAll("[data-col]");
+const cellElements = document.querySelectorAll("[data-cell]");
 const winningText = document.querySelector("[data-winning-message-text]");
 const winningElement = document.getElementById("winningMessage");
 const restartButton = document.getElementById("restartButton");
-const startingElement = document.getElementById("starting-message")
+const startingElement = document.getElementById("starting-message");
 const startButton = document.getElementById("startButton");
 const turnBar = document.getElementById("turn-bar");
+const pointers = document.querySelectorAll(".pointer-cell");
+
+
+// variables
 const players = ["Red", "Yellow"];
 let currentPlayer = "Yellow";
 const spaces = [35, 36, 37, 38, 39, 40, 41];
 
-startButton.addEventListener('click', startGame)
+
+// event handlers
+const handleCellMouseOver = (e) => {
+  const cell = e.target;
+  const column = cell.dataset.col;
+
+  if (currentPlayer == "Red") {
+    pointers[column].classList.add("red");
+  } else {
+    pointers[column].classList.add("yellow");
+  }
+};
+
+const handleCellMouseOut = (e) => {
+  const cell = e.target;
+  const column = cell.dataset.col;
+
+  pointers[column].classList.remove("red");
+  pointers[column].classList.remove("yellow");
+};
+
+
+// add event listenera
+startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", startGame);
 
+cellElements.forEach((cell) => {
+  cell.addEventListener("mouseover", handleCellMouseOver);
+  cell.addEventListener("mouseout", handleCellMouseOut);
+});
+
+
+// start game
 function startGame() {
   currentPlayer = randomPlayer();
   if (currentPlayer == "Red") {
@@ -46,6 +80,8 @@ function insertMove(e) {
   e.target.dataset.peice = currentPlayer;
   let column = e.target.dataset.col;
   spaces[column] = Number(e.target.dataset.cell) - 7;
+
+  e.target.classList.remove('active')
 
   if (spaces[column] >= 0) {
     let next_cell = cellElements[spaces[column]];
