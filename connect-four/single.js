@@ -97,11 +97,10 @@ function startGame() {
   spaces = [35, 36, 37, 38, 39, 40, 41];
 
   randomPlayer();
-  turnBarColor();
+  turnBar.style.background = RED;
 
   if (isHumanTurn == false) {
     computerMove();
-    swapMoves();
   }
 }
 
@@ -124,7 +123,7 @@ function computerMove() {
     winningElement.classList.add("show");
   }
   swapMoves();
-  turnBarColor();
+  turnBar.style.background = RED;
 }
 
 function randomMove() {
