@@ -106,7 +106,7 @@ function startGame() {
 
 // computer move
 function computerMove() {
-  let [bestMove, bestScore] = miniMax(6, -Infinity, Infinity, true);
+  let [bestMove, bestScore] = miniMax(7, -Infinity, Infinity, true);
   console.log(bestMove, bestScore);
   insertPiece(COMPUTER, bestMove);
   cellElements[bestMove].classList.add(COMPUTER);
@@ -208,7 +208,7 @@ function evalWindow(window, player) {
     filterLength(window, player) == 3 &&
     filterLength(window, " ") == 1
   ) {
-    score += 10;
+    score += 15;
   } else if (filterLength(window, player) == 4) {
     score += 10000;
   }
