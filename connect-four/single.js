@@ -23,7 +23,7 @@ let spaces = [35, 36, 37, 38, 39, 40, 41];
 const handleCellMouseOver = (e) => {
   const cell = e.target;
   const column = cell.dataset.col;
-  pointers[column].classList.add(isHumanTurn ? PLAYER : COMPUTER);
+  pointers[column].classList.add(PLAYER);
 };
 
 const handleCellMouseOut = (e) => {
@@ -39,8 +39,8 @@ const insertMove = (e) => {
 
   if (spaces[column] >= 0) {
     const nextCell = cellElements[spaces[column]];
-    nextCell.classList.add(isHumanTurn ? PLAYER : COMPUTER);
-    nextCell.dataset.peice = isHumanTurn ? PLAYER : COMPUTER;
+    nextCell.classList.add(PLAYER);
+    nextCell.dataset.peice = PLAYER;
     spaces[column] -= 7;
   } else {
     cellElements.forEach((cell) => {
@@ -52,9 +52,11 @@ const insertMove = (e) => {
     spaces = spaces.filter((value) => value >= 0);
   }
 
-  if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
-    winningText.style.color = isHumanTurn ? RED : YELLOW;
-    winningText.innerHTML = `${isHumanTurn ? "Red" : "Yellow"} wins!`;
+  if (checkWin(`${PLAYER}`)) {
+    winningText.style.color = RED;
+    winningText.innerHTML = `${
+      isHumanTurn ? "Red wins! You just beat the Game..." : "Yellow wins :("
+    }`;
     winningElement.classList.add("show");
   }
 
@@ -65,20 +67,8 @@ const insertMove = (e) => {
   }
 
   swapMoves();
-  computerMove();
-
-  if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
-    winningText.style.color = isHumanTurn ? RED : YELLOW;
-    winningText.innerHTML = `${isHumanTurn ? "Red" : "Yellow"} wins!`;
-    winningElement.classList.add("show");
-  }
-
-  if (isFull()) {
-    winningText.style.color = WHITE;
-    winningText.innerHTML = "Draw";
-    winningElement.classList.add("show");
-  }
-  swapMoves();
+  turnBar.style.background = YELLOW;
+  setTimeout(computerMove, 100);
 };
 
 // add event listeners
@@ -117,11 +107,24 @@ function startGame() {
 
 // computer move
 function computerMove() {
-  let [bestMove, bestScore] = miniMax(5, -Infinity, Infinity, true);
-  console.log(bestMove);
-  console.log(bestScore);
+  let [bestMove, bestScore] = miniMax(6, -Infinity, Infinity, true);
+  console.log(bestMove, bestScore);
   insertPiece(COMPUTER, bestMove);
   cellElements[bestMove].classList.add(COMPUTER);
+
+  if (checkWin(`${COMPUTER}`)) {
+    winningText.style.color = YELLOW;
+    winningText.innerHTML = "Yellow Wins";
+    winningElement.classList.add("show");
+  }
+
+  if (isFull()) {
+    winningText.style.color = WHITE;
+    winningText.innerHTML = "Draw";
+    winningElement.classList.add("show");
+  }
+  swapMoves();
+  turnBarColor();
 }
 
 function randomMove() {
@@ -137,13 +140,14 @@ function randomMove() {
 
 function miniMax(depth, alpha, beta, isMaximizing) {
   const possibleMoves = spaces.filter((n) => n >= 0);
+  const length = possibleMoves.length;
   lastMove = isLastMove();
   if (depth == 0 || lastMove) {
     if (lastMove) {
       if (checkWin(COMPUTER)) {
-        return [null, 10000];
+        return [null, Infinity];
       } else if (checkWin(PLAYER)) {
-        return [null, -10000];
+        return [null, -Infinity];
       } else {
         return [null, 0];
       }
@@ -157,7 +161,7 @@ function miniMax(depth, alpha, beta, isMaximizing) {
   if (isMaximizing) {
     let bestScore = -Infinity;
     let bestMove = possibleMoves[3];
-    for (let i = 0; i < possibleMoves.length; i++) {
+    for (let i = 0; i < length; i++) {
       insertPiece(COMPUTER, possibleMoves[i]);
       let score = miniMax(depth - 1, alpha, beta, false)[1];
       removeMove(possibleMoves[i]);
@@ -174,7 +178,7 @@ function miniMax(depth, alpha, beta, isMaximizing) {
   } else {
     let bestScore = Infinity;
     let bestMove = possibleMoves[3];
-    for (let i = 0; i < possibleMoves.length; i++) {
+    for (let i = 0; i < length; i++) {
       insertPiece(PLAYER, possibleMoves[i]);
       let score = miniMax(depth - 1, alpha, beta, true)[1];
       removeMove(possibleMoves[i]);
@@ -207,7 +211,7 @@ function evalWindow(window, player) {
   ) {
     score += 10;
   } else if (filterLength(window, player) == 4) {
-    score += 1000;
+    score += 10000;
   }
 
   if (filterLength(window, oppPeice) == 2 && filterLength(window, " ") == 2) {
@@ -216,9 +220,8 @@ function evalWindow(window, player) {
     filterLength(window, oppPeice) == 3 &&
     filterLength(window, " ") == 1
   ) {
-    score -= 50;
+    score -= 200;
   }
-  console.log(score);
   return score;
 }
 
@@ -239,15 +242,11 @@ function calculateScore(player) {
 
   for (let i = 3; i < 42; i += 7) {
     if (cellElements[i] == player) {
-      score += 5;
+      score += 15;
     }
   }
-
   score +=
     horizontalScore(player) + verticalScore(player) + diagonalScore(player);
-
-  console.log(score);
-
   return score;
 }
 
@@ -323,7 +322,7 @@ function diagonalScore(player) {
 }
 
 function turnBarColor() {
-  turnBar.style["background"] = isHumanTurn ? RED : YELLOW;
+  turnBar.style["background"] = `${isHumanTurn ? RED : YELLOW}`;
 }
 
 function filterLength(window, player) {
@@ -343,7 +342,6 @@ function resetCells(cell) {
 // chooses random player to start
 function randomPlayer() {
   let choice = Math.floor(Math.random() * 2);
-  console.log(choice);
   if (choice == 0) {
     isHumanTurn = true;
   } else {
@@ -354,7 +352,6 @@ function randomPlayer() {
 // changes the player
 function swapMoves() {
   isHumanTurn = !isHumanTurn;
-  turnBarColor();
 }
 
 // checks if four cells are equal and not empty
