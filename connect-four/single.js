@@ -55,7 +55,7 @@ const insertMove = (e) => {
   if (checkWin(`${PLAYER}`)) {
     winningText.style.color = RED;
     winningText.innerHTML = `${
-      isHumanTurn ? "Red wins! You just beat the Game..." : "Yellow wins :("
+      isHumanTurn ? "Red wins! Fuck You..." : "Yellow wins :("
     }`;
     winningElement.classList.add("show");
   }
