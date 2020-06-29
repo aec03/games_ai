@@ -266,3 +266,23 @@ body {
     height: 40px;
   }
 }
+
+@media (max-width: 450px) {
+  .cell,
+  .pointer-cell {
+    width: 40px;
+    height: 40px;
+  }
+  .board-background {
+    height: 284px;
+    width: 334px;
+  }
+  .winning-message,
+  .starting-message {
+    font-size: 3rem;
+  }
+  .rules-message {
+    font-size: 1.5rem;
+    padding: 2rem;
+  }
+}
