@@ -14,7 +14,7 @@ const YELLOW = "#ffeb3b";
 const WHITE = "#ecf0f1";
 const PLAYER = "red";
 const COMPUTER = "yellow";
-let isHumanTurn;
+let isHumanTurn = true;
 let spaces = [35, 36, 37, 38, 39, 40, 41];
 
 // event handlers
@@ -50,8 +50,9 @@ const insertMove = (e) => {
     spaces = spaces.filter((value) => value >= 0);
     console.log(spaces);
   }
+  console.log(`${isHumanTurn ? PLAYER : COMPUTER}`);
 
-  if (checkWin(`?{isHumanTurn ? 'red' : 'yellow'}`)) {
+  if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
     winningText.style.color = isHumanTurn ? RED : YELLOW;
     winningText.innerHTML = `${isHumanTurn ? PLAYER : COMPUTER} wins!`;
     winningElement.classList.add("show");
@@ -66,6 +67,20 @@ const insertMove = (e) => {
   swapMoves();
   turnBarColor();
   computerMove();
+  console.log("done");
+
+  if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
+    winningText.style.color = isHumanTurn ? RED : YELLOW;
+    winningText.innerHTML = `${isHumanTurn ? PLAYER : COMPUTER} wins!`;
+    winningElement.classList.add("show");
+  }
+
+  if (isFull()) {
+    winningText.style.color = WHITE;
+    winningText.innerHTML = "Draw";
+    winningElement.classList.add("show");
+  }
+  swapMoves();
 };
 
 // add event listeners
@@ -85,28 +100,35 @@ function startGame() {
   winningElement.classList.remove("show");
 
   spaces = [35, 36, 37, 38, 39, 40, 41];
-  isHumanTurn = randomPlayer;
 
   turnBarColor();
 
   if (!isHumanTurn) {
-    console.log("comp");
-
     computerMove();
   }
 }
 
 // computer move
 function computerMove() {
-  let [bestMove, bestScore] = self.miniMax(2, -Infinity, Infinity, true);
+  let [bestMove, bestScore] = self.miniMax(0, -Infinity, Infinity, true);
   insertPiece(COMPUTER, bestMove);
-  cellElements[bestMove].classList.add(COMPUTER)
-  console.log('complete')
+  cellElements[bestMove].classList.add(COMPUTER);
+}
+
+function randomMove() {
+  let possibleMoves = spaces.filter((n) => n >= 0);
+  let choice = Math.floor(Math.random() * possibleMoves.length);
+  let cell = cellElements[possibleMoves[choice]];
+  const column = Number(cell.dataset.col);
+
+  spaces[column] -= 7;
+  cell.dataset.peice = COMPUTER;
+  cell.classList.add(COMPUTER);
+  console.log(cell);
 }
 
 function miniMax(depth, alpha, beta, isMaximizing) {
   let possibleMoves = spaces.filter((n) => n >= 0);
-  console.log(possibleMoves)
   lastMove = isLastMove();
   if (depth == 0 || lastMove) {
     if (lastMove) {
@@ -118,6 +140,8 @@ function miniMax(depth, alpha, beta, isMaximizing) {
         return null, 0;
       }
     } else {
+      console.log('here')
+
       return null, calculateScore(COMPUTER);
     }
   }
