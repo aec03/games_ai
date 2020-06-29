@@ -1,6 +1,5 @@
 :root {
   --cell-size: 70px;
-  --mark-size: calc(var(--cell-size) * 0.9);
   --dark-color: #2e2e2e;
   --blue: #1976d2;
   --yellow: #ffeb3b;
@@ -56,6 +55,7 @@ body {
   background: #1976d2;
   box-shadow: inset 12px 12px 20px #1564b3, inset -12px -12px 20px #1d88f2;
 }
+
 .cell::before {
   content: "";
   position: absolute;
@@ -65,6 +65,10 @@ body {
   border-radius: 50%;
   background: #2e2e2e;
   box-shadow: inset 5px 5px 10px #1c1c1c, inset -5px -5px 10px #404040;
+}
+
+.cell.empty {
+  cursor: not-allowed;
 }
 
 .cell.yellow::before {
@@ -96,12 +100,6 @@ body {
   border-radius: 50px;
   background: linear-gradient(145deg, #d21b59, #f9206a);
   box-shadow: 6px 6px 12px #b3174c, -6px -6px 12px #ff257a;
-}
-
-.cell.empty,
-.cell.yellow,
-.cell.red {
-  cursor: not-allowed;
 }
 
 .winning-message {
@@ -196,6 +194,7 @@ body {
 
 .starting-message button:focus {
   background-color: var(--light-color);
+  border: none;
 }
 
 .starting-message.show {
