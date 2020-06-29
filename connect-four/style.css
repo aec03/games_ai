@@ -34,7 +34,6 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  position: fixed;
   display: flex;
   justify-content: center;
   align-content: center;
@@ -43,7 +42,7 @@ body {
 }
 
 .board {
-  position: fixed;
+  position: absolute;
   margin: 0;
   display: grid;
   justify-content: center;
@@ -194,13 +193,13 @@ body {
   height: 20px;
   width: 100%;
   bottom: 0;
+  margin: 0;
   position: absolute;
   background: black;
 }
 
 .board-background {
   z-index: -2;
-  position: fixed;
   height: 474px;
   width: 544px;
   background: transparent;
