@@ -4,7 +4,9 @@ const winningText = document.querySelector("[data-winning-message-text]");
 const winningElement = document.getElementById("winningMessage");
 const restartButton = document.getElementById("restartButton");
 const startingElement = document.getElementById("starting-message");
+const rulesElement = document.getElementById("rules-message");
 const startButton = document.getElementById("startButton");
+const playButton = document.getElementById("playButton");
 const turnBar = document.getElementById("turn-bar");
 const pointers = document.querySelectorAll(".pointer-cell");
 
@@ -52,7 +54,7 @@ const insertMove = (e) => {
 
   if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
     winningText.style.color = isHumanTurn ? RED : YELLOW;
-    winningText.innerHTML = `${isHumanTurn ? PLAYER : COMPUTER} wins!`;
+    winningText.innerHTML = `${isHumanTurn ? "Red" : "Yellow"} wins!`;
     winningElement.classList.add("show");
   }
 
@@ -63,13 +65,11 @@ const insertMove = (e) => {
   }
 
   swapMoves();
-  turnBarColor();
   computerMove();
-  console.log("done");
 
   if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
     winningText.style.color = isHumanTurn ? RED : YELLOW;
-    winningText.innerHTML = `${isHumanTurn ? PLAYER : COMPUTER} wins!`;
+    winningText.innerHTML = `${isHumanTurn ? "Red" : "Yellow"} wins!`;
     winningElement.classList.add("show");
   }
 
@@ -82,6 +82,7 @@ const insertMove = (e) => {
 };
 
 // add event listeners
+playButton.addEventListener("click", showRules);
 startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", startGame);
 
@@ -92,26 +93,31 @@ cellElements.forEach((cell) => {
 });
 
 // functions
+function showRules() {
+  startingElement.classList.remove("show");
+  rulesElement.classList.add("show");
+}
+
 function startGame() {
   cellElements.forEach((cell) => resetCells(cell));
   startingElement.classList.remove("show");
   winningElement.classList.remove("show");
+  rulesElement.classList.remove("show");
 
   spaces = [35, 36, 37, 38, 39, 40, 41];
 
-  isHumanTurn = randomPlayer()
-
+  randomPlayer();
   turnBarColor();
 
-  if (!isHumanTurn) {
+  if (isHumanTurn == false) {
     computerMove();
-
+    swapMoves();
   }
 }
 
 // computer move
 function computerMove() {
-  let [bestMove, bestScore] = miniMax(3, -Infinity, Infinity, true);
+  let [bestMove, bestScore] = miniMax(5, -Infinity, Infinity, true);
   console.log(bestMove);
   console.log(bestScore);
   insertPiece(COMPUTER, bestMove);
@@ -337,6 +343,7 @@ function resetCells(cell) {
 // chooses random player to start
 function randomPlayer() {
   let choice = Math.floor(Math.random() * 2);
+  console.log(choice);
   if (choice == 0) {
     isHumanTurn = true;
   } else {
@@ -347,6 +354,7 @@ function randomPlayer() {
 // changes the player
 function swapMoves() {
   isHumanTurn = !isHumanTurn;
+  turnBarColor();
 }
 
 // checks if four cells are equal and not empty
