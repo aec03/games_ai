@@ -16,11 +16,13 @@
 }
 
 body {
+  box-sizing: border-box;
   margin: 0;
   background: var(--blue);
 }
 
 #game {
+  box-sizing: border-box;
   width: 100vw;
   height: 100vh;
   display: flex;
