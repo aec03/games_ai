@@ -285,6 +285,12 @@ body {
     font-size: 1.5rem;
     padding: 2rem;
   }
+  .pointer {
+    top: 240px;
+  }
+  #turn-bar {
+    height: 60px;
+  }
 }
 
 @media (max-width: 350px) {
@@ -308,5 +314,11 @@ body {
   .starting-message button,
   .rules-message button {
     font-size: 1.5rem;
+  }
+  .pointer {
+    top: 270px;
+  }
+  #turn-bar {
+    height: 80px;
   }
 }
