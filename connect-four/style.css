@@ -10,6 +10,7 @@
 *,
 *::after,
 *::before {
+  overflow: hidden;
   box-sizing: border-box;
   font-family: dm sans, fredoka one;
   font-weight: 600;
@@ -33,6 +34,7 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-content: center;
@@ -41,6 +43,7 @@ body {
 }
 
 .board {
+  position: fixed;
   margin: 0;
   display: grid;
   justify-content: center;
@@ -197,7 +200,7 @@ body {
 
 .board-background {
   z-index: -2;
-  position: absolute;
+  position: fixed;
   height: 474px;
   width: 544px;
   background: transparent;
