@@ -48,9 +48,7 @@ const insertMove = (e) => {
       }
     });
     spaces = spaces.filter((value) => value >= 0);
-    console.log(spaces);
   }
-  console.log(`${isHumanTurn ? PLAYER : COMPUTER}`);
 
   if (checkWin(`${isHumanTurn ? PLAYER : COMPUTER}`)) {
     winningText.style.color = isHumanTurn ? RED : YELLOW;
@@ -101,16 +99,21 @@ function startGame() {
 
   spaces = [35, 36, 37, 38, 39, 40, 41];
 
+  isHumanTurn = randomPlayer()
+
   turnBarColor();
 
   if (!isHumanTurn) {
     computerMove();
+
   }
 }
 
 // computer move
 function computerMove() {
-  let [bestMove, bestScore] = self.miniMax(0, -Infinity, Infinity, true);
+  let [bestMove, bestScore] = miniMax(3, -Infinity, Infinity, true);
+  console.log(bestMove);
+  console.log(bestScore);
   insertPiece(COMPUTER, bestMove);
   cellElements[bestMove].classList.add(COMPUTER);
 }
@@ -124,25 +127,22 @@ function randomMove() {
   spaces[column] -= 7;
   cell.dataset.peice = COMPUTER;
   cell.classList.add(COMPUTER);
-  console.log(cell);
 }
 
 function miniMax(depth, alpha, beta, isMaximizing) {
-  let possibleMoves = spaces.filter((n) => n >= 0);
+  const possibleMoves = spaces.filter((n) => n >= 0);
   lastMove = isLastMove();
   if (depth == 0 || lastMove) {
     if (lastMove) {
       if (checkWin(COMPUTER)) {
-        return null, 10000;
+        return [null, 10000];
       } else if (checkWin(PLAYER)) {
-        return null, -10000;
+        return [null, -10000];
       } else {
-        return null, 0;
+        return [null, 0];
       }
     } else {
-      console.log('here')
-
-      return null, calculateScore(COMPUTER);
+      return [null, calculateScore(COMPUTER)];
     }
   }
   if (isFull()) {
@@ -164,13 +164,13 @@ function miniMax(depth, alpha, beta, isMaximizing) {
         break;
       }
     }
-    return bestMove, bestScore;
+    return [bestMove, bestScore];
   } else {
     let bestScore = Infinity;
     let bestMove = possibleMoves[3];
     for (let i = 0; i < possibleMoves.length; i++) {
       insertPiece(PLAYER, possibleMoves[i]);
-      let score = miniMax(depth - 1, alpha, beta, false)[1];
+      let score = miniMax(depth - 1, alpha, beta, true)[1];
       removeMove(possibleMoves[i]);
       if (score < bestScore) {
         bestScore = score;
@@ -181,108 +181,8 @@ function miniMax(depth, alpha, beta, isMaximizing) {
         break;
       }
     }
-    return bestMove, bestScore;
+    return [bestMove, bestScore];
   }
-}
-
-function insertPiece(player, move) {
-  cellElements[move].dataset.peice = player;
-}
-
-function removeMove(move) {
-  cellElements[move].dataset.peice = " ";
-}
-
-function calculateScore(player) {
-  let score = 0;
-
-  for (let i = 3; i < 42; i + 7) {
-    if (cellElements[i] == player) {
-      score += 5;
-    }
-  }
-
-  score += horizontalScore(player) += verticalScore(player) += diagonalScore(
-    player
-  );
-
-  return score;
-}
-
-function horizontalScore(player) {
-  let score = 0;
-
-  for (let i = 0; i < 6; i++) {
-    for (let j = 0; j < 4; j++) {
-      let spot = i * 7 + j;
-      score += evalwindow(
-        [
-          cellElements[spot].dataset.peice,
-          cellElements[spot + 1].dataset.peice,
-          cellElements[spot + 2].dataset.peice,
-          cellElements[spot + 3].dataset.peice,
-        ],
-        player
-      );
-    }
-  }
-  return score;
-}
-
-function verticalScore(player) {
-  let score = 0;
-
-  for (let i = 0; i < 21; i++) {
-    score += evalwindow(
-      [
-        cellElements[i].dataset.peice,
-        cellElements[i + 7].dataset.peice,
-        cellElements[i + 14].dataset.peice,
-        cellElements[i + 21].dataset.peice,
-      ],
-      player
-    );
-  }
-  return score;
-}
-
-function diagonalScore(player) {
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 4; j++) {
-      let spot = i * 7 + j;
-      score += evalWindow(
-        [
-          cellElements[spot].dataset.peice,
-          cellElements[spot + 8].dataset.peice,
-          cellElements[spot + 16].dataset.peice,
-          cellElements[spot + 24].dataset.peice,
-        ],
-        player
-      );
-    }
-  }
-  for (let i = 0; i < 3; i++) {
-    for (let j = 3; j < 7; j++) {
-      let spot = i * 7 + j;
-      score += evalWindow(
-        [
-          cellElements[spot].dataset.peice,
-          cellElements[spot + 6].dataset.peice,
-          cellElements[spot + 12].dataset.peice,
-          cellElements[spot + 18].dataset.peice,
-        ],
-        player
-      );
-    }
-  }
-}
-
-function turnBarColor() {
-  turnBar.style["background"] = isHumanTurn ? RED : YELLOW;
-}
-
-function filterLength(window, player) {
-  return window.filter((x) => x == player).length;
 }
 
 function evalWindow(window, player) {
@@ -312,7 +212,116 @@ function evalWindow(window, player) {
   ) {
     score -= 50;
   }
+  console.log(score);
   return score;
+}
+
+function insertPiece(player, move) {
+  cellElements[move].dataset.peice = player;
+  const column = cellElements[move].dataset.col;
+  spaces[column] -= 7;
+}
+
+function removeMove(move) {
+  cellElements[move].dataset.peice = " ";
+  const column = cellElements[move].dataset.col;
+  spaces[column] += 7;
+}
+
+function calculateScore(player) {
+  let score = 0;
+
+  for (let i = 3; i < 42; i += 7) {
+    if (cellElements[i] == player) {
+      score += 5;
+    }
+  }
+
+  score +=
+    horizontalScore(player) + verticalScore(player) + diagonalScore(player);
+
+  console.log(score);
+
+  return score;
+}
+
+function horizontalScore(player) {
+  let score = 0;
+
+  for (let i = 0; i < 6; i++) {
+    for (let j = 0; j < 4; j++) {
+      let spot = i * 7 + j;
+      score += evalWindow(
+        [
+          cellElements[spot].dataset.peice,
+          cellElements[spot + 1].dataset.peice,
+          cellElements[spot + 2].dataset.peice,
+          cellElements[spot + 3].dataset.peice,
+        ],
+        player
+      );
+    }
+  }
+  return score;
+}
+
+function verticalScore(player) {
+  let score = 0;
+
+  for (let i = 0; i < 21; i++) {
+    score += evalWindow(
+      [
+        cellElements[i].dataset.peice,
+        cellElements[i + 7].dataset.peice,
+        cellElements[i + 14].dataset.peice,
+        cellElements[i + 21].dataset.peice,
+      ],
+      player
+    );
+  }
+  return score;
+}
+
+function diagonalScore(player) {
+  let score = 0;
+
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 4; j++) {
+      let spot = i * 7 + j;
+      score += evalWindow(
+        [
+          cellElements[spot].dataset.peice,
+          cellElements[spot + 8].dataset.peice,
+          cellElements[spot + 16].dataset.peice,
+          cellElements[spot + 24].dataset.peice,
+        ],
+        player
+      );
+    }
+  }
+  for (let i = 0; i < 3; i++) {
+    for (let j = 3; j < 7; j++) {
+      let spot = i * 7 + j;
+      score += evalWindow(
+        [
+          cellElements[spot].dataset.peice,
+          cellElements[spot + 6].dataset.peice,
+          cellElements[spot + 12].dataset.peice,
+          cellElements[spot + 18].dataset.peice,
+        ],
+        player
+      );
+    }
+  }
+  return score;
+}
+
+function turnBarColor() {
+  turnBar.style["background"] = isHumanTurn ? RED : YELLOW;
+}
+
+function filterLength(window, player) {
+  return window.filter((x) => x == player).length;
 }
 
 function isLastMove() {
