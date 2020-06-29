@@ -1,93 +1,131 @@
 // selectors
-const cellElements = document.querySelectorAll("[data-col]");
+const cellElements = document.querySelectorAll("[data-cell]");
 const winningText = document.querySelector("[data-winning-message-text]");
 const winningElement = document.getElementById("winningMessage");
 const restartButton = document.getElementById("restartButton");
-const startingElement = document.getElementById("starting-message")
+const startingElement = document.getElementById("starting-message");
 const startButton = document.getElementById("startButton");
 const turnBar = document.getElementById("turn-bar");
-const players = ["Red", "Yellow"];
-let currentPlayer = "Yellow";
-const spaces = [35, 36, 37, 38, 39, 40, 41];
+const pointers = document.querySelectorAll(".pointer-cell");
 
-startButton.addEventListener('click', startGame)
-restartButton.addEventListener("click", startGame);
+// variables
+const RED = "#e91e63";
+const YELLOW = "#ffeb3b";
+const WHITE = "#ecf0f1";
+let isRedTurn;
+let spaces = [35, 36, 37, 38, 39, 40, 41];
 
-function startGame() {
-  currentPlayer = randomPlayer();
-  if (currentPlayer == "Red") {
-    turnBar.style.background = "#e91e63";
-  } else {
-    turnBar.style.background = "#ffeb3b";
-  }
-  winningElement.classList.remove("show");
-  startingElement.classList.remove("show");
-  cellElements.forEach((cell) => {
-    cell.classList.remove("active");
-    cell.classList.remove("empty");
-    cell.classList.remove("red");
-    cell.classList.remove("yellow");
-    cell.dataset.peice = " ";
-    if (cell.dataset.cell >= 35 && cell.dataset.cell < 42) {
-      cell.addEventListener("click", insertMove, { once: true });
-      cell.classList.add("active");
-    } else {
-      cell.removeEventListener("click", insertMove);
-      cell.classList.add("empty");
-    }
-  });
-}
+// event handlers
+const handleCellMouseOver = (e) => {
+  const cell = e.target;
+  const column = cell.dataset.col;
+  pointers[column].classList.add(isRedTurn ? "red" : "yellow");
+};
 
-function randomPlayer() {
-  return players[Math.floor(Math.random() * players.length)];
-}
+const handleCellMouseOut = (e) => {
+  const cell = e.target;
+  const column = cell.dataset.col;
+  pointers[column].classList.remove("red");
+  pointers[column].classList.remove("yellow");
+};
 
-function insertMove(e) {
-  e.target.dataset.peice = currentPlayer;
-  let column = e.target.dataset.col;
-  spaces[column] = Number(e.target.dataset.cell) - 7;
+const insertMove = (e) => {
+  const cell = e.target;
+  const column = Number(cell.dataset.col);
 
   if (spaces[column] >= 0) {
-    let next_cell = cellElements[spaces[column]];
-    next_cell.addEventListener("click", insertMove, { once: true });
-    next_cell.classList.add("active");
-    next_cell.classList.remove("empty");
+    const nextCell = cellElements[spaces[column]];
+    spaces[column] -= 7;
+    nextCell.classList.add(isRedTurn ? "red" : "yellow");
+    nextCell.dataset.peice = isRedTurn ? "red" : "yellow";
+  } else {
+    cellElements.forEach((cell) => {
+      if (cell.dataset.col == column) {
+        cell.classList.add('empty')
+        cell.removeEventListener('click')
+      }
+    })
+    spaces = spaces.filter(value => value >= 0)
+    console.log(spaces)
   }
 
   if (checkWin()) {
-    winningText.innerHTML = `${currentPlayer} wins`;
-    if (currentPlayer == "Red") {
-      winningText.style["color"] = "#e91e63";
-    } else {
-      winningText.style["color"] = "#ffeb3b";
-    }
+    winningText.style.color = isRedTurn ? RED : YELLOW;
+    winningText.innerHTML = `${isRedTurn ? "Red" : "Yellow"} wins!`;
     winningElement.classList.add("show");
   }
 
-  if (fullCheck()) {
+  if (isFull()) {
+    winningText.style.color = WHITE;
     winningText.innerHTML = "Draw";
     winningElement.classList.add("show");
   }
 
-  swapMoves(e);
-}
+  swapMoves();
+  turnBar.style["background"] = isRedTurn ? RED : YELLOW;
+};
 
-function swapMoves(e) {
-  if (currentPlayer == "Red") {
-    e.target.classList.add("red");
-    turnBar.style["background"] = "#ffeb3b";
-    currentPlayer = "Yellow";
-  } else {
-    e.target.classList.add("yellow");
-    turnBar.style["background"] = "#e91e63";
-    currentPlayer = "Red";
+// add event listeners
+startButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", startGame);
+
+cellElements.forEach((cell) => {
+  cell.addEventListener("mouseover", handleCellMouseOver);
+  cell.addEventListener("mouseout", handleCellMouseOut);
+  cell.addEventListener("click", insertMove);
+});
+
+// functions
+function startGame() {
+  cellElements.forEach((cell) => resetCells(cell));
+  startingElement.classList.remove("show");
+  winningElement.classList.remove("show");
+
+  spaces = [35, 36, 37, 38, 39, 40, 41];
+  isRedTurn = randomPlayer;
+
+  if (!isRedTurn) {
+    computerMove()
   }
 }
 
-function colorMatch(one, two, three, four, player) {
-  return one == two && one == three && one == four && one == player;
+// computer move
+function computerMove() {
+  return true;
 }
 
+// resets cells
+function resetCells(cell) {
+  cell.dataset.peice = " ";
+  cell.classList.remove("red", "yellow");
+}
+
+// chooses random player to start
+function randomPlayer() {
+  let choice = Math.floor(Math.random() * 2);
+  if (choice == 0) {
+    isRedTurn = true;
+  } else {
+    isRedTurn = false;
+  }
+}
+
+// changes the player
+function swapMoves() {
+  isRedTurn = !isRedTurn;
+}
+
+// checks if four cells are equal and not empty
+function colorMatch(one, two, three, four) {
+  return (
+    one == two &&
+    one == three &&
+    one == four &&
+    one == `${isRedTurn ? "red" : "yellow"}`
+  );
+}
+
+// checks for win
 function checkWin() {
   return horizontalCheck() || verticalCheck() || diagonalCheck();
 }
@@ -101,8 +139,7 @@ function horizontalCheck() {
           cellElements[spot].dataset.peice,
           cellElements[spot + 1].dataset.peice,
           cellElements[spot + 2].dataset.peice,
-          cellElements[spot + 3].dataset.peice,
-          currentPlayer
+          cellElements[spot + 3].dataset.peice
         )
       ) {
         return true;
@@ -118,8 +155,7 @@ function verticalCheck() {
         cellElements[i].dataset.peice,
         cellElements[i + 7].dataset.peice,
         cellElements[i + 14].dataset.peice,
-        cellElements[i + 21].dataset.peice,
-        currentPlayer
+        cellElements[i + 21].dataset.peice
       )
     ) {
       return true;
@@ -136,8 +172,7 @@ function diagonalCheck() {
           cellElements[spot].dataset.peice,
           cellElements[spot + 8].dataset.peice,
           cellElements[spot + 16].dataset.peice,
-          cellElements[spot + 24].dataset.peice,
-          currentPlayer
+          cellElements[spot + 24].dataset.peice
         )
       ) {
         return true;
@@ -152,8 +187,7 @@ function diagonalCheck() {
           cellElements[spot].dataset.peice,
           cellElements[spot + 6].dataset.peice,
           cellElements[spot + 12].dataset.peice,
-          cellElements[spot + 18].dataset.peice,
-          currentPlayer
+          cellElements[spot + 18].dataset.peice
         )
       ) {
         return true;
@@ -162,11 +196,6 @@ function diagonalCheck() {
   }
 }
 
-function fullCheck() {
-  for (let i = 0; i < 7; i++) {
-    if (spaces[i] > 0) {
-      return false;
-    }
-  }
-  return true;
+function isFull() {
+  return false;
 }
