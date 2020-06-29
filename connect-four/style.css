@@ -274,7 +274,7 @@ body {
     height: 40px;
   }
   .board-background {
-    height: 284px;
+    height: 294px;
     width: 334px;
   }
   .winning-message,
@@ -284,5 +284,29 @@ body {
   .rules-message {
     font-size: 1.5rem;
     padding: 2rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .cell,
+  .pointer-cell {
+    width: 30px;
+    height: 30px;
+  }
+  .board-background {
+    height: 234px;
+    width: 264px;
+  }
+  .winning-message,
+  .starting-message {
+    font-size: 2.5rem;
+  }
+  .rules-message {
+    font-size: 1.5rem;
+  }
+  .winning-message button,
+  .starting-message button,
+  .rules-message button {
+    font-size: 1.5rem;
   }
 }
